@@ -11,7 +11,7 @@ class ClientHandler : public SocketConnector {
 
 public:
 
-    ClientHandler(SOCKET socket) : clientSocket{socket} {}
+    explicit ClientHandler(SOCKET socket) : SocketConnector(), clientSocket{socket} {}
 
     void operator()() { handleReadFromClient();}
 
