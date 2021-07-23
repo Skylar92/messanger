@@ -9,6 +9,7 @@ set(SOURCE_FILES
         ../server/socket/TCPServer.h
         ../server/socket/handler/ClientHandler.h
         ../core/socket/dto/Message.h
+        ../core/socket/utils/SerializationUtils.h
 
         ../core/socket/SocketConnector.cpp
         ../server/socket/TCPServer.cpp
