@@ -5,12 +5,17 @@
 
 void listening(ClientSocketConnector *clientSocket) {
     clientSocket->listening(
-            [](const std::string &message) -> void { printf("Message from backend %s", message.c_str()); });
+            [](const Message &message) -> void { printf("%s: %s", message.username.c_str(), message.text.c_str()); });
 }
 
 int main() {
 
-    auto *clientSocket = new ClientSocketConnector();
+    string username;
+
+    printf("Enter your name: ");
+    cin >> username;
+
+    auto *clientSocket = new ClientSocketConnector(username);
     clientSocket->setupConnection();
 
     std::string word;

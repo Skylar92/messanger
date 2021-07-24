@@ -12,15 +12,17 @@
 using namespace std;
 
 struct Message {
-    std::string text;
+    string username;
+    string text;
 
-    Message(string text = "") : text(move(text)) {}
+    Message(string userName = "", string text = "") : text(move(text)), username(move(userName)) {}
 
     friend class boost::serialization::access;
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int /*version*/) {
-        ar & text;
+        ar & text,
+        ar & username;
     }
 };
 

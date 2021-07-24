@@ -16,13 +16,13 @@ void TCPServer::startServer() {
     service.sin_addr.s_addr = inet_addr(DEFAULT_HOST);
     service.sin_port = htons(DEFAULT_PORT);
 
-    if (bind(listenSocket, (SOCKADDR *) &service, sizeof(service)) == SOCKET_ERROR ||
+    if (::bind(listenSocket, (SOCKADDR *) &service, sizeof(service)) == SOCKET_ERROR ||
         listen(listenSocket, 1) == SOCKET_ERROR) {
         closeAndPrintWSAError(L"bind failed with error: %ld\n", &listenSocket);
         throw runtime_error(std::string("bind failed with error"));
     }
 
-    status.exchange(ServerStatus::ON, memory_order_relaxed);
+    setServerStatus(ServerStatus::ON);
 
     wprintf(L"Server started on %d port\n", DEFAULT_PORT);
 
@@ -31,7 +31,7 @@ void TCPServer::startServer() {
 
 void TCPServer::stopServer() {
     close(&listenSocket);
-    status = status.exchange(ServerStatus::OFF);
+    status = setServerStatus(ServerStatus::OFF);
 }
 
 void TCPServer::handleNewConnections() {
@@ -44,15 +44,31 @@ void TCPServer::handleNewConnections() {
             break;
         } else {
             wprintf(L"New client connected.\n");
-            auto clientHandler = (ClientHandler(clientSocket));
+            auto onMessageReceivedCallBack = [=](const Message &message) -> void {
+                for (auto & client : clients) {
+                    if (client.first != message.username) {
+                        client.second.sendTo(message);
+                    }
+                }
+            };
+
+            auto onHelloMessageReceivedCallback = [=](const Message &message,
+                                                      const ClientHandler &clientHandler) -> void {
+                clients.insert(pair(message.username, clientHandler));
+            };
+
+            auto clientHandler = (ClientHandler(clientSocket, onMessageReceivedCallBack,
+                                                onHelloMessageReceivedCallback));
             // run separate thread for handleReadFromClient client operations
             thread handleNewClientThread(clientHandler);
             handleNewClientThread.detach();
         }
-    } while (status.load(memory_order_relaxed) == ServerStatus::ON);
+    } while (getServerStatus() == ServerStatus::ON);
 }
 
 TCPServer::~TCPServer() {
-    stopServer();
+    if (getServerStatus() == ServerStatus::ON) {
+        stopServer();
+    }
 }
 

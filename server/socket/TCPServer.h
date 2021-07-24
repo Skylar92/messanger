@@ -5,11 +5,10 @@
 #ifndef MESSENGER_TCPSERVER_H
 #define MESSENGER_TCPSERVER_H
 
+#include <atomic>
+#include <map>
 #include "../../core/socket/SocketConnector.h"
 #include "handler/ClientHandler.h"
-#include <atomic>
-
-using namespace std;
 
 enum class ServerStatus : uint8_t {
     ON = 1,
@@ -25,13 +24,19 @@ public:
 
     void stopServer();
 
-    ServerStatus getServerStatus() { return status; }
+    ServerStatus getServerStatus() { return status.load(memory_order_relaxed); }
 
 private:
     atomic<ServerStatus> status = ServerStatus::OFF;
     SOCKET listenSocket = INVALID_SOCKET;
+    map<string, ClientHandler> clients;
 
     void handleNewConnections();
+
+    ServerStatus setServerStatus(ServerStatus newStatus) {
+        status.exchange(newStatus, memory_order_relaxed);
+        return getServerStatus();
+    }
 };
 
 
