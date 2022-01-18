@@ -10,8 +10,8 @@ conan_basic_setup()
 FILE(GLOB SOURCES main.cpp
         socket/*.h
         socket/*.cpp
-        ../core/socket/*.cpp
-        ../core/socket/*.h)
+        ../core/*/*.cpp
+        ../core/*/*.h)
 
 add_executable(clientChat main.cpp ${SOURCES})
 

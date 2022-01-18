@@ -10,8 +10,8 @@ conan_basic_setup()
 FILE(GLOB SOURCES main.cpp
         socket/*.h
         socket/*.cpp
-        socket/handler/*.h
-        socket/handler/*.cpp
+        socket/*/*.h
+        socket/*/*.cpp
         ../core/socket/*.cpp
         ../core/socket/*.h)
 
