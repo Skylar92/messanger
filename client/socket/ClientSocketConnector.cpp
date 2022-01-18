@@ -52,7 +52,7 @@ ClientSocketConnector::~ClientSocketConnector() {
     WSACleanup();
 }
 
-void ClientSocketConnector::listening(std::function<void(std::string)> callback) {
+void ClientSocketConnector::listening(const std::function<void(std::string)>& callback) {
     if (callback != nullptr) {
         char recvbuf[DEFAULT_BUFFER];
         int recvbuflen = DEFAULT_BUFFER;

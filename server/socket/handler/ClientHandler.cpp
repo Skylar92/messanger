@@ -28,7 +28,7 @@ void ClientHandler::handleReadFromClient() {
         } else if (result == 0)
             wprintf(L"Connection closed\n");
         else
-            wprintf(L"recv failed: %d\n", WSAGetLastError());
+            wprintf(L"User disconnected: %d\n", WSAGetLastError());
 
     } while (result > 0);
 

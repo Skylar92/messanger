@@ -22,7 +22,7 @@ public:
 
     void sendMessage(const char *message);
 
-    void listening(std::function<void(std::string)> callback);
+    void listening(const std::function<void(std::string)>& callback);
 
 private:
 

@@ -45,9 +45,10 @@ void TCPServer::handleNewConnections() {
         } else {
             wprintf(L"New client connected.\n");
             auto onMessageReceivedCallBack = [=](const Message &message) -> void {
-                for (auto & client : clients) {
+                Message serverMessage{message.username, message.text, tm()};
+                for (auto &client : clients) {
                     if (client.first != message.username) {
-                        client.second.sendTo(message);
+                        client.second.sendTo(serverMessage);
                     }
                 }
             };
